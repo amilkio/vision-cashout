@@ -1,2 +1,64 @@
 <!DOCTYPE html>
-<html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Vision Cashout Benin</title><style>body{background:#000;color:#fff;font-family:Arial;padding:15px}.box{background:#111;border:2px solid gold;border-radius:15px;padding:20px;text-align:center}input{width:90%;padding:14px;margin:8px 0;border-radius:10px;border:0}button{width:100%;padding:16px;border-radius:12px;border:0;font-weight:bold;margin:8px 0}</style></head><body><div id="insc" class="box"><h2 style="color:gold">INSCRIPTION GRATUITE</h2><input id="nom" placeholder="Ton nom"><input id="tel" placeholder="Numero MoMo 97..."><button style="background:gold" onclick="go()">S'INSCRIRE → VOIR LES PACKS</button></div><div id="packs" style="display:none"><div class="box" style="border-color:#00e5ff"><h2>🔒 Videos Bloquees</h2><p>Gagne 1000F par video de 30s</p></div><button style="background:white" onclick="location.href='https://lomopay.net/pay/a75cd502'">PACK STARTER 1500F</button><button style="background:#00e5ff" onclick="location.href='https://lomopay.net/pay/05dcc181'">PACK PRO 2800F</button><button style="background:#a020f0;color:white" onclick="location.href='https://lomopay.net/pay/f4b23d70'">PACK BOSS 4000F</button></div><script>function go(){let n=document.getElementById('nom').value;let t=document.getElementById('tel').value;if(n.length<2||t.length<8){alert('Remplis nom et numero');return}localStorage.setItem('tel',t);document.getElementById('insc').style.display='none';document.getElementById('packs').style.display='block'}</script></body></html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VISION CASHOUT BENIN</title>
+<style>
+body{background:#000;color:#fff;font-family:Arial;padding:15px;text-align:center}
+.box{background:#111;padding:20px;border-radius:15px;margin:15px 0;border:1px solid #333}
+input,select{width:92%;padding:15px;border-radius:10px;border:0;margin:8px 0;font-size:15px}
+button{width:92%;padding:18px;border-radius:12px;border:0;font-weight:bold;font-size:16px;margin:8px 0;cursor:pointer}
+.starter{background:#fff;color:#000}.pro{background:#00e5ff;color:#000}.boss{background:#a020f0;color:#fff}
+</style>
+</head>
+<body>
+<h1 style="color:gold">VISION CASHOUT 🇧🇯</h1>
+<p>Gagne 1000F par vidéo de 30s</p>
+
+<div class="box">
+<h3 style="color:gold">1. INSCRIPTION</h3>
+<input id="nom" placeholder="Ton nom complet">
+<select id="pays">
+<option value="">Choisis ton pays</option>
+<option>Bénin 🇧🇯</option>
+<option>Togo 🇹🇬</option>
+<option>Burkina Faso 🇧🇫</option>
+<option>Côte d'Ivoire 🇨🇮</option>
+<option>Sénégal 🇸🇳</option>
+<option>Cameroun 🇨🇲</option>
+<option>Niger 🇳🇪</option>
+<option>Mali 🇲🇱</option>
+</select>
+<input id="tel" type="tel" placeholder="Numéro WhatsApp">
+<input id="momo" type="tel" placeholder="Numéro MoMo pour recevoir l'argent">
+<button onclick="save()" style="background:gold">S'INSCRIRE ✅</button>
+</div>
+
+<div class="box">
+<h3 style="color:gold">2. CHOISIS TON PACK</h3>
+<button class="starter" onclick="pay('starter','https://lomopay.net/pay/a75cd502')">PACK STARTER 1500F<br>15 vidéos / jour = 15.000F</button>
+<button class="pro" onclick="pay('pro','https://lomopay.net/pay/05dcc181')">PACK PRO 2800F<br>25 vidéos / jour = 25.000F</button>
+<button class="boss" onclick="pay('boss','https://lomopay.net/pay/f4b23d70')">PACK BOSS 4000F<br>30 vidéos / jour = 30.000F</button>
+</div>
+
+<script>
+function save(){
+let n=document.getElementById('nom').value;
+let p=document.getElementById('pays').value;
+let t=document.getElementById('tel').value;
+let m=document.getElementById('momo').value;
+if(n.length<2){alert('Entre ton nom');return}
+if(!p){alert('Choisis ton pays');return}
+if(t.length<8){alert('Numéro WhatsApp invalide');return}
+if(m.length<8){alert('Numéro MoMo invalide');return}
+localStorage.setItem('nom',n);localStorage.setItem('pays',p);localStorage.setItem('tel',t);localStorage.setItem('momo',m);
+alert('Bienvenue '+n+'! Choisis ton PACK maintenant 👇');
+}
+function pay(pack,url){
+if(!localStorage.getItem('tel')){alert('Remplis l\'inscription d\'abord!');return}
+localStorage.setItem('pack',pack);location.href=url;
+}
+</script>
+</body>
+</html>
