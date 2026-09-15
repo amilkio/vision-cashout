@@ -20,11 +20,9 @@ body{background:#000;color:#fff;font-family:Arial;padding:10px}
 <div>💰 <b id="solde">0</b>F | <span id="pack">STARTER</span></div>
 <button onclick="retirer()" style="background:#00e5ff;padding:8px 15px;border-radius:20px;border:0;font-weight:bold;cursor:pointer">RETIRER</button>
 </div>
-
 <h2 id="titre" style="text-align:center;color:gold"></h2>
 <div id="msg"><h3>🔒 Limite atteinte!</h3><p>Tu as fini tes vidéos d'aujourd'hui.<br>Reviens <b>DEMAIN</b> à 00h.</p></div>
 <div class="grid" id="grid"></div>
-
 <script>
 let solde=parseInt(localStorage.getItem('solde')||0);
 let pack=localStorage.getItem('pack')||'starter';
@@ -32,17 +30,22 @@ let nom=localStorage.getItem('nom')||'Client';
 let momo=localStorage.getItem('momo')||'';
 let tel=localStorage.getItem('tel')||'';
 let pays=localStorage.getItem('pays')||'';
+
+// FIX: sauvegarde auto par compte
+function saveSolde(){
+ let users=JSON.parse(localStorage.getItem('vc_users')||'{}');
+ if(users[tel]){ users[tel].solde=solde; localStorage.setItem('vc_users', JSON.stringify(users)); }
+ localStorage.setItem('solde', solde);
+}
+
 let limits={starter:15,pro:25,boss:30};
 let max=limits[pack]||15;
-
 document.getElementById('solde').innerText=solde;
 document.getElementById('pack').innerText=pack.toUpperCase();
 document.getElementById('titre').innerText=max+' VIDÉOS AUJOURD\'HUI = '+(max*1000)+'F';
-
 let today=new Date().toDateString();
 if(localStorage.getItem('lastDay')!=today){localStorage.setItem('lastDay',today)}
 let vuToday=0;for(let i=1;i<=30;i++){if(localStorage.getItem('v'+i+'_'+today)) vuToday++;}
-
 let grid=document.getElementById('grid');
 for(let i=1;i<=30;i++){
 let vu=localStorage.getItem('v'+i+'_'+today);
@@ -65,7 +68,7 @@ c--;btn.innerText='⏳ '+c+'s';
 if(c<=0){
 clearInterval(t);
 localStorage.setItem('v'+n+'_'+today,'1');
-solde+=1000;localStorage.setItem('solde',solde);
+solde+=1000; saveSolde();
 document.getElementById('solde').innerText=solde;
 btn.innerText='✅ VU +1000F';btn.className='done';
 count++;
