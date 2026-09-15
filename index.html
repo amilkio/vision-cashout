@@ -10,71 +10,27 @@ body{background:#000;color:#fff;font-family:Arial;padding:15px;text-align:center
 input,select{width:92%;padding:15px;border-radius:10px;border:0;margin:8px 0;font-size:15px}
 button{width:92%;padding:18px;border-radius:12px;border:0;font-weight:bold;font-size:16px;margin:8px 0;cursor:pointer}
 .starter{background:#fff;color:#000}.pro{background:#00e5ff;color:#000}.boss{background:#a020f0;color:#fff}
+.login{background:#222;border:2px dashed gold}
 </style>
 </head>
 <body>
 <h1 style="color:gold">VISION CASHOUT 🇧🇯</h1>
 <p>Gagne 1000F par vidéo de 30s</p>
 
+<div class="box login">
+<h3 style="color:gold">🔑 DÉJÀ INSCRIT?</h3>
+<p style="font-size:13px;color:#aaa">Récupère ton ancien compte</p>
+<input id="login_tel" type="tel" placeholder="Ton numéro WhatsApp">
+<button onclick="login()" style="background:#00c853;color:#fff">RÉCUPÉRER MON COMPTE ✅</button>
+</div>
+
 <div class="box">
-<h3 style="color:gold">1. INSCRIPTION</h3>
+<h3 style="color:gold">1. NOUVELLE INSCRIPTION</h3>
 <input id="nom" placeholder="Ton nom complet">
 <select id="pays">
 <option value="">Choisis ton pays</option>
-<option>Afrique du Sud 🇿🇦</option>
-<option>Algérie 🇩🇿</option>
-<option>Angola 🇦🇴</option>
-<option>Bénin 🇧🇯</option>
-<option>Botswana 🇧🇼</option>
-<option>Burkina Faso 🇧🇫</option>
-<option>Burundi 🇧🇮</option>
-<option>Cameroun 🇨🇲</option>
-<option>Cap-Vert 🇨🇻</option>
-<option>République centrafricaine 🇨🇫</option>
-<option>Comores 🇰🇲</option>
-<option>Congo 🇨🇬</option>
-<option>RD Congo 🇨🇩</option>
-<option>Côte d'Ivoire 🇨🇮</option>
-<option>Djibouti 🇩🇯</option>
-<option>Égypte 🇪🇬</option>
-<option>Érythrée 🇪🇷</option>
-<option>Eswatini 🇸🇿</option>
-<option>Éthiopie 🇪🇹</option>
-<option>Gabon 🇬🇦</option>
-<option>Gambie 🇬🇲</option>
-<option>Ghana 🇬🇭</option>
-<option>Guinée 🇬🇳</option>
-<option>Guinée-Bissau 🇬🇼</option>
-<option>Guinée équatoriale 🇬🇶</option>
-<option>Kenya 🇰🇪</option>
-<option>Lesotho 🇱🇸</option>
-<option>Libéria 🇱🇷</option>
-<option>Libye 🇱🇾</option>
-<option>Madagascar 🇲🇬</option>
-<option>Malawi 🇲🇼</option>
-<option>Mali 🇲🇱</option>
-<option>Maroc 🇲🇦</option>
-<option>Maurice 🇲🇺</option>
-<option>Mauritanie 🇲🇷</option>
-<option>Mozambique 🇲🇿</option>
-<option>Namibie 🇳🇦</option>
-<option>Niger 🇳🇪</option>
-<option>Nigéria 🇳🇬</option>
-<option>Ouganda 🇺🇬</option>
-<option>Rwanda 🇷🇼</option>
-<option>Sao Tomé-et-Principe 🇸🇹</option>
-<option>Sénégal 🇸🇳</option>
-<option>Seychelles 🇸🇨</option>
-<option>Sierra Leone 🇸🇱</option>
-<option>Somalie 🇸🇴</option>
-<option>Soudan 🇸🇩</option>
-<option>Soudan du Sud 🇸🇸</option>
-<option>Tanzanie 🇹🇿</option>
-<option>Tchad 🇹🇩</option>
-<option>Togo 🇹🇬</option>
-<option>Tunisie 🇹🇳</option>
-<option>Zambie 🇿🇲</option>
-<option>Zimbabwe 🇿🇼</option>
+<option>Bénin 🇧🇯</option><option>Burkina Faso 🇧🇫</option><option>Cameroun 🇨🇲</option><option>Côte d'Ivoire 🇨🇮</option><option>Gabon 🇬🇦</option><option>Ghana 🇬🇭</option><option>Guinée 🇬🇳</option><option>Mali 🇲🇱</option><option>Niger 🇳🇪</option><option>Nigéria 🇳🇬</option><option>RD Congo 🇨🇩</option><option>Sénégal 🇸🇳</option><option>Togo 🇹🇬</option>
+<option>Autre Afrique 🌍</option>
 </select>
 <input id="tel" type="tel" placeholder="Numéro WhatsApp">
 <input id="momo" type="tel" placeholder="Numéro MoMo pour recevoir l'argent">
@@ -87,29 +43,77 @@ button{width:92%;padding:18px;border-radius:12px;border:0;font-weight:bold;font-
 <button class="pro" onclick="pay('pro','https://lomopay.net/pay/05dcc181')">PACK PRO 2800F<br>25 vidéos / jour = 25.000F</button>
 <button class="boss" onclick="pay('boss','https://lomopay.net/pay/f4b23d70')">PACK BOSS 4000F<br>30 vidéos / jour = 30.000F</button>
 </div>
+<p style="color:#666;font-size:12px">Service client WhatsApp: +229 52 68 19 81</p>
 
 <script>
+function getUsers(){ return JSON.parse(localStorage.getItem('vc_users')||'{}'); }
+function setUsers(u){ localStorage.setItem('vc_users', JSON.stringify(u)); }
+
 function save(){
-let n=document.getElementById('nom').value;
+let n=document.getElementById('nom').value.trim();
 let p=document.getElementById('pays').value;
-let t=document.getElementById('tel').value;
-let m=document.getElementById('momo').value;
+let t=document.getElementById('tel').value.trim();
+let m=document.getElementById('momo').value.trim();
 if(n.length<2){alert('Entre ton nom');return}
 if(!p){alert('Choisis ton pays');return}
 if(t.length<8){alert('Numéro WhatsApp invalide');return}
 if(m.length<8){alert('Numéro MoMo invalide');return}
+
+let users=getUsers();
+// Si compte existe déjà, on le garde
+if(users[t]){
+  localStorage.setItem('nom', users[t].nom);
+  localStorage.setItem('pays', users[t].pays);
+  localStorage.setItem('tel', users[t].tel);
+  localStorage.setItem('momo', users[t].momo);
+  localStorage.setItem('pack', users[t].pack);
+  localStorage.setItem('solde', users[t].solde||0);
+  alert('Compte déjà existant! On t\'a reconnecté '+users[t].nom+' Solde: '+(users[t].solde||0)+'F');
+  location.href='videos.html';
+  return;
+}
+users[t]={nom:n,pays:p,tel:t,momo:m,solde:0,pack:'starter'};
+setUsers(users);
+
 localStorage.setItem('nom',n);localStorage.setItem('pays',p);localStorage.setItem('tel',t);localStorage.setItem('momo',m);
+localStorage.setItem('solde','0');
+localStorage.setItem('pack','starter');
 alert('Bienvenue '+n+'! Choisis ton PACK maintenant 👇');
 }
+
+function login(){
+let t=document.getElementById('login_tel').value.trim();
+if(t.length<8){alert('Entre ton numéro WhatsApp');return}
+let users=getUsers();
+if(!users[t]){alert('Aucun compte trouvé avec '+t+'. Inscris-toi en bas.');return}
+localStorage.setItem('nom', users[t].nom);
+localStorage.setItem('pays', users[t].pays);
+localStorage.setItem('tel', users[t].tel);
+localStorage.setItem('momo', users[t].momo);
+localStorage.setItem('pack', users[t].pack);
+localStorage.setItem('solde', users[t].solde||0);
+alert('Bienvenue '+users[t].nom+'! Solde: '+(users[t].solde||0)+'F | Pack: '+users[t].pack);
+location.href='videos.html';
+}
+
 function pay(pack,url){
 if(!localStorage.getItem('tel')){alert('Remplis l\'inscription d\'abord!');return}
-localStorage.setItem('pack',pack);location.href=url;
+localStorage.setItem('pack',pack);
+// On met à jour aussi dans la base
+let users=getUsers();
+let t=localStorage.getItem('tel');
+if(users[t]){users[t].pack=pack; setUsers(users);}
+location.href=url;
 }
+
 let params = new URLSearchParams(window.location.search);
 let paid = params.get('paid');
 if(paid){
   localStorage.setItem('pack',paid);
-  window.location.href = 'videos.html';
+  let users=getUsers();
+  let t=localStorage.getItem('tel');
+  if(users[t]){users[t].pack=paid; setUsers(users);}
+  window.location.href='videos.html';
 }
 </script>
 </body>
