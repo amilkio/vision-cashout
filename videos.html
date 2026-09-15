@@ -3,19 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mes Vidéos</title>
+<title>Mes Vidéos - VISION CASHOUT</title>
 <style>
 body{background:#000;color:#fff;font-family:Arial;padding:10px}
-.top{position:sticky;top:0;background:#111;border:2px solid gold;border-radius:15px;padding:15px;display:flex;justify-content:space-between;z-index:99}
+.top{position:sticky;top:0;background:#111;border:2px solid gold;border-radius:15px;padding:15px;display:flex;justify-content:space-between;align-items:center;z-index:99}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}
 .card{background:#111;border-radius:12px;padding:10px;text-align:center;border:1px solid #333}
-.card button{width:100%;padding:12px;border-radius:8px;border:0;font-weight:bold;background:gold;margin-top:8px}
-.done{background:#00c853!important;color:#fff}.blocked{background:#333!important;color:#888}
+.card button{width:100%;padding:12px;border-radius:8px;border:0;font-weight:bold;background:gold;margin-top:8px;cursor:pointer}
+.done{background:#00c853!important;color:#fff}
+.blocked{background:#333!important;color:#888}
 #msg{display:none;background:#a020f0;padding:15px;border-radius:12px;text-align:center;margin-top:10px}
 </style>
 </head>
 <body>
-<div class="top"><div>💰 <b id="solde">0</b>F | <span id="pack">STARTER</span></div><button onclick="retirer()" style="background:#00e5ff;padding:8px 15px;border-radius:20px;border:0;font-weight:bold">RETIRER</button></div>
+<div class="top">
+<div>💰 <b id="solde">0</b>F | <span id="pack">STARTER</span></div>
+<button onclick="retirer()" style="background:#00e5ff;padding:8px 15px;border-radius:20px;border:0;font-weight:bold;cursor:pointer">RETIRER</button>
+</div>
+
 <h2 id="titre" style="text-align:center;color:gold"></h2>
 <div id="msg"><h3>🔒 Limite atteinte!</h3><p>Tu as fini tes vidéos d'aujourd'hui.<br>Reviens <b>DEMAIN</b> à 00h.</p></div>
 <div class="grid" id="grid"></div>
@@ -23,16 +28,21 @@ body{background:#000;color:#fff;font-family:Arial;padding:10px}
 <script>
 let solde=parseInt(localStorage.getItem('solde')||0);
 let pack=localStorage.getItem('pack')||'starter';
-let nom=localStorage.getItem('nom')||'';
+let nom=localStorage.getItem('nom')||'Client';
 let momo=localStorage.getItem('momo')||'';
+let tel=localStorage.getItem('tel')||'';
+let pays=localStorage.getItem('pays')||'';
 let limits={starter:15,pro:25,boss:30};
 let max=limits[pack]||15;
+
 document.getElementById('solde').innerText=solde;
 document.getElementById('pack').innerText=pack.toUpperCase();
 document.getElementById('titre').innerText=max+' VIDÉOS AUJOURD\'HUI = '+(max*1000)+'F';
+
 let today=new Date().toDateString();
 if(localStorage.getItem('lastDay')!=today){localStorage.setItem('lastDay',today)}
 let vuToday=0;for(let i=1;i<=30;i++){if(localStorage.getItem('v'+i+'_'+today)) vuToday++;}
+
 let grid=document.getElementById('grid');
 for(let i=1;i<=30;i++){
 let vu=localStorage.getItem('v'+i+'_'+today);
@@ -52,13 +62,25 @@ if(localStorage.getItem('v'+n+'_'+today)) return;
 btn.innerText='⏳ 30s...';let c=30;
 let t=setInterval(()=>{
 c--;btn.innerText='⏳ '+c+'s';
-if(c<=0){clearInterval(t);localStorage.setItem('v'+n+'_'+today,'1');solde+=1000;localStorage.setItem('solde',solde);document.getElementById('solde').innerText=solde;btn.innerText='✅ VU +1000F';btn.className='done';count++;if(count>=max){document.getElementById('msg').style.display='block';alert('Fini pour aujourd\'hui! Tu as gagné '+(max*1000)+'F');}else{alert('+1000F! Solde: '+solde+'F')}location.reload();}
+if(c<=0){
+clearInterval(t);
+localStorage.setItem('v'+n+'_'+today,'1');
+solde+=1000;localStorage.setItem('solde',solde);
+document.getElementById('solde').innerText=solde;
+btn.innerText='✅ VU +1000F';btn.className='done';
+count++;
+if(count>=max){document.getElementById('msg').style.display='block';alert('Fini pour aujourd\'hui! Tu as gagné '+(max*1000)+'F');}
+else{alert('+1000F! Solde: '+solde+'F')}
+location.reload();
+}
 },1000);
 }
+
 function retirer(){
 if(solde<5000){alert('Minimum 5000F pour retirer. Tu as '+solde+'F');return}
-let num=momo||prompt('Numéro MoMo:');
-if(num){alert('Demande de retrait de '+solde+'F pour '+num+' envoyée! Admin va te payer sur WhatsApp. Solde: '+solde+'F');}
+let numeroService="22952681981";
+let message=`DEMANDE DE RETRAIT VISION CASHOUT%0A%0A👤 Nom: ${nom}%0A🌍 Pays: ${pays}%0A📱 WhatsApp: ${tel}%0A💳 MoMo retrait: ${momo}%0A📦 Pack: ${pack}%0A💰 Montant: ${solde}F%0A%0ASalut, je demande mon retrait svp.`;
+window.location.href=`https://wa.me/${numeroService}?text=${message}`;
 }
 </script>
 </body>
