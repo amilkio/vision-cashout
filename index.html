@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vision Cashout - Inscription</title>
+<style>
+body{font-family:Arial;background:#000;color:#fff;text-align:center;padding:15px}
+.container{max-width:480px;margin:auto;background:#111;padding:25px;border-radius:15px;border:2px solid #00ff88}
+input,select{width:92%;padding:13px;margin:8px 0;border-radius:8px;border:1px solid #00ff88;background:#222;color:#fff}
+button{background:#00ff88;color:#000;padding:14px;width:97%;border:none;border-radius:8px;font-weight:bold;font-size:19px;cursor:pointer}
+small{color:#aaa}
+</style>
+</head>
+<body>
+<div class="container">
+<h1 style="color:#00ff88">VISION CASHOUT</h1>
+<p>Regarde les vidéos = <b style="color:#00ff88">4600 FCFA / vidéo</b><br>Parrainage = <b style="color:#00ff88">5000 FCFA</b><br>Retrait à 50.000F via WhatsApp</p>
+<form id="form">
+<input id="nom" placeholder="Nom" required>
+<input id="prenom" placeholder="Prénom" required>
+<input id="tel" placeholder="Ton WhatsApp (ex: 2296xxxx)" required>
+<select id="operateur" required>
+<option value="">Ton opérateur retrait</option><option>MTN MoMo</option><option>Moov Money</option><option>Orange Money</option><option>Wave</option><option>Airtel</option><option>TMoney</option>
+</select>
+<input id="momo" placeholder="Numéro Mobile Money pour recevoir" required>
+<input id="parrain" placeholder="Code parrain (numéro de celui qui t'a invité)">
+<button>S'INSCRIRE & COMMENCER</button>
+<small>Ton lien de parrainage sera créé après inscription</small>
+</form>
+</div>
+<script>
+const p=new URLSearchParams(window.location.search);
+if(p.get('parrain')) document.getElementById('parrain').value=p.get('parrain');
+document.getElementById('form').addEventListener('submit',function(e){
+ e.preventDefault();
+ let user={
+  nom:document.getElementById('nom').value, prenom:document.getElementById('prenom').value,
+  tel:document.getElementById('tel').value, operateur:document.getElementById('operateur').value,
+  momo:document.getElementById('momo').value, parrain:document.getElementById('parrain').value,
+  soldeActuel:0, soldeRetire:0, enAttente:0, soldeTotal:0, likes:[]
+ };
+ if(user.parrain){ user.soldeActuel+=5000; user.soldeTotal+=5000; }
+ localStorage.setItem('vision_user',JSON.stringify(user));
+ window.location.href='dashboard.html';
+});
+</script>
+</body>
+  </html>
