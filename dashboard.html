@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard - VISION CASHOUT</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-[#0a0a0f] text-white min-h-screen">
+<header class="p-4 border-b border-white/10 flex justify-between items-center sticky top-0 bg-[#0a0a0f]/80 backdrop-blur">
+<a href="index.html" class="font-black text-xl">VISION<span class="text-violet-500">CASHOUT</span></a>
+<span class="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-xs font-bold"><i class="fa-solid fa-circle text-[7px]"></i> COMPTE ACTIF</span>
+</header>
+
+<div class="p-4 grid grid-cols-2 gap-4 max-w-5xl mx-auto mt-6">
+<div class="bg-white/5 border border-white/10 rounded-[20px] p-5"><p class="text-white/50 text-xs uppercase font-bold">Solde disponible</p><h2 class="text-3xl font-black mt-1">0 <span class="text-sm font-normal">FCFA</span></h2><p class="text-green-400 text-xs mt-2">● Prêt pour retrait</p></div>
+<div class="bg-white/5 border border-white/10 rounded-[20px] p-5"><p class="text-white/50 text-xs uppercase font-bold">Gains totaux</p><h2 class="text-3xl font-black mt-1">0 <span class="text-sm font-normal">FCFA</span></h2><p class="text-white/50 text-xs mt-2">Niveau 1 - Débutant</p></div>
+</div>
+
+<div class="p-4 max-w-5xl mx-auto">
+<div class="bg-gradient-to-br from-violet-600 to-indigo-700 rounded-[24px] p-6">
+<h3 class="font-black text-xl"><i class="fa-solid fa-bolt"></i> ACTIVE TON PACK MAINTENANT</h3>
+<p class="text-white/80 mt-2 text-sm">Choisis ton pack pour commencer à gagner aujourd'hui.</p>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-6">
+<div class="bg-white rounded-2xl p-4 text-black"><h4 class="font-black">PACK STARTER</h4><p class="text-2xl font-black mt-1">3.000F</p><p class="text-xs opacity-70">500F / jour pendant 30j</p></div>
+<div class="bg-black/30 border-2 border-white rounded-2xl p-4"><h4 class="font-black">PACK PRO <span class="bg-yellow-400 text-black text-[10px] px-2 rounded">POPULAIRE</span></h4><p class="text-2xl font-black mt-1">6.000F</p><p class="text-xs opacity-70">1.200F / jour pendant 30j</p></div>
+<div class="bg-black/30 border border-white/20 rounded-2xl p-4"><h4 class="font-black">PACK BOSS</h4><p class="text-2xl font-black mt-1">10.000F</p><p class="text-xs opacity-70">2.500F / jour pendant 30j</p></div>
+</div>
+<button class="w-full mt-5 bg-white text-violet-700 font-black py-4 rounded-full text-lg">PAYER AVEC FEDAPAY <i class="fa-solid fa-lock ml-2"></i></button>
+<p class="text-center text-[11px] text-white/60 mt-3">Paiement sécurisé via MTN MoMo, Moov Money, Wave, Orange Money</p>
+</div>
+
+<div class="mt-8 bg-white/5 border border-white/10 rounded-[20px] p-5">
+<h3 class="font-bold"><i class="fa-solid fa-link text-violet-400"></i> Ton lien d'affiliation (30% de commission)</h3>
+<div class="flex gap-2 mt-3">
+<input id="link" value="https://amilkio.github.io/vision-cashout/?ref=ton_pseudo" class="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-sm" readonly>
+<button onclick="navigator.clipboard.writeText(document.getElementById('link').value); alert('Lien copié! Partage-le sur WhatsApp')" class="bg-white text-black font-bold px-6 rounded-xl">Copier</button>
+</div>
+</div>
+
+<div class="mt-6 grid grid-cols-3 gap-3 pb-10">
+<button class="bg-white/5 border border-white/10 py-5 rounded-2xl font-bold text-xs"><i class="fa-brands fa-whatsapp text-xl mb-1 block"></i>Support<br>WhatsApp</button>
+<button class="bg-white/5 border border-white/10 py-5 rounded-2xl font-bold text-xs"><i class="fa-solid fa-users text-xl mb-1 block"></i>Mon équipe<br>0 filleuls</button>
+<button class="bg-white/5 border border-white/10 py-5 rounded-2xl font-bold text-xs"><i class="fa-solid fa-wallet text-xl mb-1 block"></i>Retrait<br>Min 3000F</button>
+</div>
+</div>
+</body>
+                                                                                                                                                    </html>
