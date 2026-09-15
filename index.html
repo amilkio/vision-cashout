@@ -1,49 +1,115 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vision Cashout - Inscription</title>
-<style>
-body{font-family:Arial;background:#000;color:#fff;text-align:center;padding:15px}
-.container{max-width:480px;margin:auto;background:#111;padding:25px;border-radius:15px;border:2px solid #00ff88}
-input,select{width:92%;padding:13px;margin:8px 0;border-radius:8px;border:1px solid #00ff88;background:#222;color:#fff}
-button{background:#00ff88;color:#000;padding:14px;width:97%;border:none;border-radius:8px;font-weight:bold;font-size:19px;cursor:pointer}
-small{color:#aaa}
-</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VISION CASHOUT - 500F par vidéo</title>
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-<div class="container">
-<h1 style="color:#00ff88">VISION CASHOUT</h1>
-<p>Regarde les vidéos = <b style="color:#00ff88">4600 FCFA / vidéo</b><br>Parrainage = <b style="color:#00ff88">5000 FCFA</b><br>Retrait à 50.000F via WhatsApp</p>
-<form id="form">
-<input id="nom" placeholder="Nom" required>
-<input id="prenom" placeholder="Prénom" required>
-<input id="tel" placeholder="Ton WhatsApp (ex: 2296xxxx)" required>
-<select id="operateur" required>
-<option value="">Ton opérateur retrait</option><option>MTN MoMo</option><option>Moov Money</option><option>Orange Money</option><option>Wave</option><option>Airtel</option><option>TMoney</option>
-</select>
-<input id="momo" placeholder="Numéro Mobile Money pour recevoir" required>
-<input id="parrain" placeholder="Code parrain (numéro de celui qui t'a invité)">
-<button>S'INSCRIRE & COMMENCER</button>
-<small>Ton lien de parrainage sera créé après inscription</small>
-</form>
-</div>
+<body class="bg-black text-white min-h-screen pb-20">
 <script>
-const p=new URLSearchParams(window.location.search);
-if(p.get('parrain')) document.getElementById('parrain').value=p.get('parrain');
-document.getElementById('form').addEventListener('submit',function(e){
- e.preventDefault();
- let user={
-  nom:document.getElementById('nom').value, prenom:document.getElementById('prenom').value,
-  tel:document.getElementById('tel').value, operateur:document.getElementById('operateur').value,
-  momo:document.getElementById('momo').value, parrain:document.getElementById('parrain').value,
-  soldeActuel:0, soldeRetire:0, enAttente:0, soldeTotal:0, likes:[]
- };
- if(user.parrain){ user.soldeActuel+=5000; user.soldeTotal+=5000; }
- localStorage.setItem('vision_user',JSON.stringify(user));
- window.location.href='dashboard.html';
-});
+const PAYLINKS={
+  starter:"https://lomopay.net/pay/a75cd502",
+  pro:"https://lomopay.net/pay/05dcc181",
+  boss:"https://lomopay.net/pay/f4b23d70"
+};
+let solde=parseInt(localStorage.getItem('vc_solde')||'0');
+let watchedToday=parseInt(localStorage.getItem('vc_watched_today')||'0');
+let firstWithdraw=localStorage.getItem('vc_first_withdraw')!=='true';
+let watching=null, timerInt=null, secondsLeft=30;
+const VIDEOS=[
+ {id:1,title:"Pub MTN Bénin",thumb:"https://img.youtube.com/vi/ScMzIvxBSi4/hqdefault.jpg",yt:"ScMzIvxBSi4",gain:500},
+ {id:2,title:"Astuce MoMo",thumb:"https://img.youtube.com/vi/9bZkp7q19f0/hqdefault.jpg",yt:"9bZkp7q19f0",gain:500},
+ {id:3,title:"Parrainage 30%",thumb:"https://img.youtube.com/vi/kJQP7kiw5Fk/hqdefault.jpg",yt:"kJQP7kiw5Fk",gain:500},
+ {id:4,title:"Vision Cashout",thumb:"https://img.youtube.com/vi/OPf0YbXqDm0/hqdefault.jpg",yt:"OPf0YbXqDm0",gain:500},
+];
+function fmt(n){return n.toLocaleString()+'F'}
+function updateUI(){
+ document.getElementById('soldeDisplay').innerText=fmt(solde);
+ document.getElementById('watchedDisplay').innerText=watchedToday+'/20';
+ document.getElementById('progressBar').style.width=Math.min((solde/5000)*100,100)+'%';
+}
+function pay(p){window.open(PAYLINKS[p],'_blank');}
+function openVideo(id){
+ const v=VIDEOS.find(x=>x.id===id); watching=v; secondsLeft=30;
+ document.getElementById('playerModal').classList.remove('hidden');
+ document.getElementById('playerTitle').innerText=v.title;
+ document.getElementById('ytFrame').src='https://www.youtube.com/embed/'+v.yt+'?autoplay=1';
+ document.getElementById('gainBtn').disabled=true;
+ clearInterval(timerInt);
+ timerInt=setInterval(()=>{
+  secondsLeft--; document.getElementById('timerText').innerText=secondsLeft+'s';
+  document.getElementById('timerBar').style.width=((30-secondsLeft)/30*100)+'%';
+  if(secondsLeft<=0){ clearInterval(timerInt);
+   document.getElementById('gainBtn').disabled=false;
+   document.getElementById('gainBtn').innerText='🎉 RÉCUPÉRER 500F';
+   document.getElementById('gainBtn').className='w-full bg-green-500 text-black font-black py-4 rounded-xl animate-pulse';
+  }
+ },1000);
+}
+function closeVideo(){ document.getElementById('playerModal').classList.add('hidden'); document.getElementById('ytFrame').src=''; clearInterval(timerInt); }
+function claimGain(){
+ if(!watching)return; solde+=500; watchedToday++;
+ localStorage.setItem('vc_solde',solde); localStorage.setItem('vc_watched_today',watchedToday);
+ updateUI(); closeVideo();
+ document.getElementById('gainPopup').classList.remove('hidden');
+ setTimeout(()=>document.getElementById('gainPopup').classList.add('hidden'),2000);
+ if(solde>=5000 && firstWithdraw){ setTimeout(()=>document.getElementById('readyPopup').classList.remove('hidden'),800); }
+}
+function retirer(){
+ if(solde<5000){ alert('Retrait minimum 5000F\nSolde: '+fmt(solde)); return; }
+ if(firstWithdraw){
+  solde+=120000; localStorage.setItem('vc_solde',solde); localStorage.setItem('vc_first_withdraw','true'); firstWithdraw=false; updateUI();
+  document.getElementById('bonusPopup').classList.remove('hidden'); return;
+ }
+ let num=prompt('Numéro MTN/Moov pour '+fmt(solde)+':');
+ if(num){ alert('Retrait '+fmt(solde)+' envoyé sur '+num); solde=0; localStorage.setItem('vc_solde',0); updateUI(); }
+}
+window.onload=()=>{
+ updateUI();
+ let c=document.getElementById('videoList'); VIDEOS.forEach(v=>{
+  c.innerHTML+=`<div onclick="openVideo(${v.id})" class="bg-white/5 border border-white/10 rounded-2xl p-3 flex gap-3"><img src="${v.thumb}" class="w-24 h-16 rounded-lg"><div class="flex-1"><div class="font-bold text-sm">${v.title}</div><div class="text-xs text-green-400">+500F • 30 sec</div></div><div>▶️</div></div>`;
+ });
+}
 </script>
-</body>
-  </html>
 
+<header class="sticky top-0 bg-black/90 p-4 flex justify-between border-b border-gray-800">
+<div class="font-black"><span class="text-cyan-400">VISION</span> CASHOUT</div>
+<div class="flex gap-2"><div class="bg-gray-900 border rounded-full px-3 py-1 text-xs">💰 <span id="soldeDisplay" class="text-cyan-400 font-black">0F</span></div><button onclick="retirer()" class="bg-green-500 text-black font-black px-4 py-1 rounded-full text-xs">RETIRER</button></div>
+</header>
+
+<div class="px-4 pt-4 max-w-md mx-auto">
+<div class="bg-gray-900 rounded-2xl p-3">
+<div class="flex justify-between text-xs text-gray-400"><span id="watchedDisplay">0/20</span><span>Objectif 5000F</span></div>
+<div class="w-full bg-black rounded-full h-2 mt-2"><div id="progressBar" class="bg-cyan-400 h-2 rounded-full" style="width:0%"></div></div>
+</div>
+</div>
+
+<section class="px-4 py-5 max-w-md mx-auto">
+<h2 class="font-black text-sm mb-3">📺 500F / VIDÉO - REGARDE 30s</h2>
+<div id="videoList" class="grid gap-3"></div>
+</section>
+
+<section class="px-4 max-w-md mx-auto grid gap-3 pb-10">
+<button onclick="pay('starter')" class="bg-white text-black font-black py-3 rounded-xl">PACK STARTER 3.000F</button>
+<button onclick="pay('pro')" class="bg-cyan-400 text-black font-black py-3 rounded-xl">PACK PRO 6.000F</button>
+<button onclick="pay('boss')" class="bg-purple-600 text-white font-black py-3 rounded-xl">PACK BOSS 10.000F</button>
+<div class="bg-gray-900 border rounded-2xl p-3 text-center text-xs"><span class="text-green-400">Retrait min 5000F</span> | <span class="text-yellow-400">1er retrait = +120.000F BONUS</span></div>
+</section>
+
+<div id="playerModal" class="hidden fixed inset-0 bg-black z-50 flex flex-col">
+<div class="p-4 flex justify-between border-b border-gray-800"><div id="playerTitle"></div><button onclick="closeVideo()" class="bg-gray-800 px-3 py-1 rounded-full">✕</button></div>
+<div class="flex-1 relative"><iframe id="ytFrame" class="w-full h-full" frameborder="0" allowfullscreen></iframe>
+<div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black">
+<div class="flex justify-between text-xs"><span>Regarde jusqu'au bout</span><span id="timerText">30s</span></div>
+<div class="w-full bg-gray-800 h-2 rounded-full mt-2"><div id="timerBar" class="bg-green-500 h-2 rounded-full" style="width:0%"></div></div>
+<button id="gainBtn" onclick="claimGain()" disabled class="w-full bg-gray-700 text-gray-400 font-black py-4 rounded-xl mt-3">⏳ Regarde 30s...</button>
+</div></div>
+</div>
+
+<div id="gainPopup" class="hidden fixed top-20 left-1/2 -translate-x-1/2 bg-green-500 text-black font-black px-6 py-3 rounded-full">+500F ajouté! 💰</div>
+<div id="readyPopup" class="hidden fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"><div class="bg-white text-black rounded-3xl p-6 text-center"><h2 class="text-2xl font-black">🎉 5000F ATTEINT!</h2><button onclick="document.getElementById('readyPopup').classList.add('hidden'); retirer()" class="w-full bg-green-500 font-black py-3 rounded-xl mt-4">RETIRER + BONUS 120K 🚀</button><button onclick="document.getElementById('readyPopup').classList.add('hidden')" class="w-full bg-gray-200 font-black py-2 rounded-xl mt-2">Plus tard</button></div></div>
+<div id="bonusPopup" class="hidden fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"><div class="bg-yellow-400 text-black rounded-3xl p-8 text-center"><h2 class="text-4xl font-black">🎉 120.000F!</h2><p class="font-black mt-2">BONUS DÉBLOQUÉ!</p><button onclick="document.getElementById('bonusPopup').classList.add('hidden')" class="w-full bg-black text-white font-black py-3 rounded-xl mt-4">CONTINUER</button></div></div>
+
+</body>
+ </html>
