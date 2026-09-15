@@ -21,14 +21,60 @@ button{width:92%;padding:18px;border-radius:12px;border:0;font-weight:bold;font-
 <input id="nom" placeholder="Ton nom complet">
 <select id="pays">
 <option value="">Choisis ton pays</option>
+<option>Afrique du Sud 🇿🇦</option>
+<option>Algérie 🇩🇿</option>
+<option>Angola 🇦🇴</option>
 <option>Bénin 🇧🇯</option>
-<option>Togo 🇹🇬</option>
+<option>Botswana 🇧🇼</option>
 <option>Burkina Faso 🇧🇫</option>
-<option>Côte d'Ivoire 🇨🇮</option>
-<option>Sénégal 🇸🇳</option>
+<option>Burundi 🇧🇮</option>
 <option>Cameroun 🇨🇲</option>
-<option>Niger 🇳🇪</option>
+<option>Cap-Vert 🇨🇻</option>
+<option>République centrafricaine 🇨🇫</option>
+<option>Comores 🇰🇲</option>
+<option>Congo 🇨🇬</option>
+<option>RD Congo 🇨🇩</option>
+<option>Côte d'Ivoire 🇨🇮</option>
+<option>Djibouti 🇩🇯</option>
+<option>Égypte 🇪🇬</option>
+<option>Érythrée 🇪🇷</option>
+<option>Eswatini 🇸🇿</option>
+<option>Éthiopie 🇪🇹</option>
+<option>Gabon 🇬🇦</option>
+<option>Gambie 🇬🇲</option>
+<option>Ghana 🇬🇭</option>
+<option>Guinée 🇬🇳</option>
+<option>Guinée-Bissau 🇬🇼</option>
+<option>Guinée équatoriale 🇬🇶</option>
+<option>Kenya 🇰🇪</option>
+<option>Lesotho 🇱🇸</option>
+<option>Libéria 🇱🇷</option>
+<option>Libye 🇱🇾</option>
+<option>Madagascar 🇲🇬</option>
+<option>Malawi 🇲🇼</option>
 <option>Mali 🇲🇱</option>
+<option>Maroc 🇲🇦</option>
+<option>Maurice 🇲🇺</option>
+<option>Mauritanie 🇲🇷</option>
+<option>Mozambique 🇲🇿</option>
+<option>Namibie 🇳🇦</option>
+<option>Niger 🇳🇪</option>
+<option>Nigéria 🇳🇬</option>
+<option>Ouganda 🇺🇬</option>
+<option>Rwanda 🇷🇼</option>
+<option>Sao Tomé-et-Principe 🇸🇹</option>
+<option>Sénégal 🇸🇳</option>
+<option>Seychelles 🇸🇨</option>
+<option>Sierra Leone 🇸🇱</option>
+<option>Somalie 🇸🇴</option>
+<option>Soudan 🇸🇩</option>
+<option>Soudan du Sud 🇸🇸</option>
+<option>Tanzanie 🇹🇿</option>
+<option>Tchad 🇹🇩</option>
+<option>Togo 🇹🇬</option>
+<option>Tunisie 🇹🇳</option>
+<option>Zambie 🇿🇲</option>
+<option>Zimbabwe 🇿🇼</option>
 </select>
 <input id="tel" type="tel" placeholder="Numéro WhatsApp">
 <input id="momo" type="tel" placeholder="Numéro MoMo pour recevoir l'argent">
@@ -59,6 +105,12 @@ function pay(pack,url){
 if(!localStorage.getItem('tel')){alert('Remplis l\'inscription d\'abord!');return}
 localStorage.setItem('pack',pack);location.href=url;
 }
+let params = new URLSearchParams(window.location.search);
+let paid = params.get('paid');
+if(paid){
+  localStorage.setItem('pack',paid);
+  window.location.href = 'videos.html';
+}
 </script>
 </body>
-</html>
+  </html>
