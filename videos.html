@@ -24,7 +24,6 @@ body{background:#000;color:#fff;font-family:Arial;padding:10px}
 <div id="msg"><h3>🔒 Limite atteinte!</h3><p>Tu as fini tes vidéos d'aujourd'hui.<br>Reviens <b>DEMAIN</b> à 00h.</p></div>
 <div class="grid" id="grid"></div>
 <script>
-// --- DONNEES ---
 let solde=parseInt(localStorage.getItem('solde')||0);
 let pack=localStorage.getItem('pack')||'';
 let nom=localStorage.getItem('nom')||'Client';
@@ -32,38 +31,34 @@ let momo=localStorage.getItem('momo')||'';
 let tel=localStorage.getItem('tel')||'';
 let pays=localStorage.getItem('pays')||'';
 
-// --- VERIF PAIEMENT OBLIGATOIRE ---
 let paramsUrl = new URLSearchParams(window.location.search);
 let paidParam = paramsUrl.get('paid');
+let enAttente = localStorage.getItem('pack_en_attente')||'';
 
 if(paidParam){
-  pack = paidParam;
+  pack = paidParam.toLowerCase();
   localStorage.setItem('pack', pack);
   localStorage.removeItem('pack_en_attente');
-  let users=JSON.parse(localStorage.getItem('vc_users')||'{}');
-  if(users[tel]){ users[tel].pack=pack; localStorage.setItem('vc_users', JSON.stringify(users));}
-  window.history.replaceState({}, document.title, "videos.html");
+}else if(!pack && enAttente){
+  pack = enAttente.toLowerCase();
+  localStorage.setItem('pack', pack);
+  localStorage.removeItem('pack_en_attente');
 }
 
-// BLOCAGE SI PAS PAYÉ
 if(!pack){
   alert('⛔ Tu dois payer un PACK avant de voir les vidéos!');
   window.location.href='index.html';
-  throw new Error('bloqué');
 }
-
 function saveSolde(){
  let users=JSON.parse(localStorage.getItem('vc_users')||'{}');
  if(users[tel]){ users[tel].solde=solde; localStorage.setItem('vc_users', JSON.stringify(users)); }
  localStorage.setItem('solde', solde);
 }
-
 let limits={starter:15,pro:25,boss:30};
 let max=limits[pack]||0;
 document.getElementById('solde').innerText=solde;
 document.getElementById('pack').innerText=pack.toUpperCase();
 document.getElementById('titre').innerText=max+' VIDÉOS AUJOURD\'HUI = '+(max*1000)+'F';
-
 let today=new Date().toDateString();
 if(localStorage.getItem('lastDay')!=today){localStorage.setItem('lastDay',today)}
 let vuToday=0;for(let i=1;i<=30;i++){if(localStorage.getItem('v'+i+'_'+today)) vuToday++;}
@@ -76,7 +71,6 @@ let cls=vu?'done':blocked?'blocked':'';
 grid.innerHTML+=`<div class="card"><div style="background:#222;height:80px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:30px">🎬</div><p>Vidéo ${i}</p><p style="color:gold">+1000F</p><button id="b${i}" class="${cls}" onclick="voir(${i})" ${blocked?'disabled':''}>${btnText}</button></div>`;
 }
 if(vuToday>=max) document.getElementById('msg').style.display='block';
-
 function voir(n){
 let today=new Date().toDateString();
 let count=0;for(let i=1;i<=30;i++){if(localStorage.getItem('v'+i+'_'+today)) count++;}
@@ -93,13 +87,11 @@ solde+=1000; saveSolde();
 document.getElementById('solde').innerText=solde;
 btn.innerText='✅ VU +1000F';btn.className='done';
 count++;
-if(count>=max){document.getElementById('msg').style.display='block';alert('Fini pour aujourd\'hui! Tu as gagné '+(max*1000)+'F');}
-else{alert('+1000F! Solde: '+solde+'F')}
+if(count>=max){document.getElementById('msg').style.display='block';}
 location.reload();
 }
 },1000);
 }
-
 function retirer(){
 if(solde<5000){alert('Minimum 5000F pour retirer. Tu as '+solde+'F');return}
 let numeroService="22952681981";
