@@ -60,7 +60,6 @@ if(t.length<8){alert('Numéro WhatsApp invalide');return}
 if(m.length<8){alert('Numéro MoMo invalide');return}
 
 let users=getUsers();
-// Si compte existe déjà, on le garde
 if(users[t]){
   localStorage.setItem('nom', users[t].nom);
   localStorage.setItem('pays', users[t].pays);
@@ -72,13 +71,14 @@ if(users[t]){
   location.href='videos.html';
   return;
 }
-users[t]={nom:n,pays:p,tel:t,momo:m,solde:0,pack:'starter'};
+// NOUVEAU: On ne donne PAS de pack par défaut
+users[t]={nom:n,pays:p,tel:t,momo:m,solde:0,pack:''};
 setUsers(users);
 
 localStorage.setItem('nom',n);localStorage.setItem('pays',p);localStorage.setItem('tel',t);localStorage.setItem('momo',m);
 localStorage.setItem('solde','0');
-localStorage.setItem('pack','starter');
-alert('Bienvenue '+n+'! Choisis ton PACK maintenant 👇');
+localStorage.removeItem('pack');
+alert('Bienvenue '+n+'! Maintenant choisis ton PACK et PAYE pour commencer 👇');
 }
 
 function login(){
@@ -86,34 +86,39 @@ let t=document.getElementById('login_tel').value.trim();
 if(t.length<8){alert('Entre ton numéro WhatsApp');return}
 let users=getUsers();
 if(!users[t]){alert('Aucun compte trouvé avec '+t+'. Inscris-toi en bas.');return}
+if(!users[t].pack){alert('Compte trouvé mais tu n\'as pas encore payé de pack. Choisis un pack après connexion.');}
 localStorage.setItem('nom', users[t].nom);
 localStorage.setItem('pays', users[t].pays);
 localStorage.setItem('tel', users[t].tel);
 localStorage.setItem('momo', users[t].momo);
-localStorage.setItem('pack', users[t].pack);
+localStorage.setItem('pack', users[t].pack||'');
 localStorage.setItem('solde', users[t].solde||0);
-alert('Bienvenue '+users[t].nom+'! Solde: '+(users[t].solde||0)+'F | Pack: '+users[t].pack);
-location.href='videos.html';
+if(users[t].pack){
+  alert('Bienvenue '+users[t].nom+'! Solde: '+(users[t].solde||0)+'F | Pack: '+users[t].pack);
+  location.href='videos.html';
+} else {
+  alert('Bienvenue '+users[t].nom+'! Tu dois payer un pack pour continuer.');
+}
 }
 
 function pay(pack,url){
-if(!localStorage.getItem('tel')){alert('Remplis l\'inscription d\'abord!');return}
-localStorage.setItem('pack',pack);
-// On met à jour aussi dans la base
-let users=getUsers();
-let t=localStorage.getItem('tel');
-if(users[t]){users[t].pack=pack; setUsers(users);}
+let t=localStorage.getItem('tel') || document.getElementById('tel').value.trim();
+if(!t || t.length<8){alert('Remplis l\'inscription d\'abord!');return}
+// On met SEULEMENT en attente, pas validé
+localStorage.setItem('pack_en_attente',pack);
 location.href=url;
 }
 
+// Retour de LomoPay
 let params = new URLSearchParams(window.location.search);
 let paid = params.get('paid');
 if(paid){
-  localStorage.setItem('pack',paid);
-  let users=getUsers();
   let t=localStorage.getItem('tel');
+  localStorage.setItem('pack',paid);
+  localStorage.removeItem('pack_en_attente');
+  let users=getUsers();
   if(users[t]){users[t].pack=paid; setUsers(users);}
-  window.location.href='videos.html';
+  window.location.href='videos.html?paid='+paid;
 }
 </script>
 </body>
