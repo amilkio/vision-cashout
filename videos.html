@@ -6,27 +6,74 @@
 <title>Mes Vidéos - VISION CASHOUT</title>
 <style>
 body{background:#000;color:#fff;font-family:Arial;padding:10px}
-.top{position:sticky;top:0;background:#111;border:2px solid gold;border-radius:15px;padding:15px;display:flex;justify-content:space-between;align-items:center;z-index:99}
+.top{position:sticky;top:0;background:#111;border:2px solid gold;border-radius:15px;padding:15px;z-index:99}
+.top1{display:flex;justify-content:space-between;align-items:center}
+.top2{margin-top:10px;display:flex;gap:8px}
+.box{flex:1;background:#222;border-radius:10px;padding:10px;text-align:center}
+.box p{margin:0;font-size:11px;color:#aaa}
+.box h3{margin:5px 0 0 0}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}
 .card{background:#111;border-radius:12px;padding:10px;text-align:center;border:1px solid #333}
 .card button{width:100%;padding:12px;border-radius:8px;border:0;font-weight:bold;background:gold;margin-top:8px;cursor:pointer}
 .done{background:#00c853!important;color:#fff}
 .blocked{background:#333!important;color:#888}
 #msg{display:none;background:#a020f0;padding:15px;border-radius:12px;text-align:center;margin-top:10px}
+#popupRetrait{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:999;align-items:center;justify-content:center;padding:15px}
+.popupBox{background:#111;border:2px solid gold;border-radius:15px;padding:20px;width:100%;max-width:400px}
+.popupBox input,.popupBox select{width:100%;padding:12px;margin:8px 0;border-radius:8px;border:1px solid #333;background:#222;color:#fff;box-sizing:border-box}
 </style>
 </head>
 <body>
+
 <div class="top">
-<div>💰 <b id="solde">0</b>F | <span id="pack">-</span></div>
-<button onclick="retirer()" style="background:#00e5ff;padding:8px 15px;border-radius:20px;border:0;font-weight:bold;cursor:pointer">RETIRER</button>
+  <div class="top1">
+    <div>
+      <div style="font-size:13px;color:#aaa">👤 <span id="showNom">Client</span> | 📱 <span id="showTel">-</span></div>
+      <div style="font-size:12px;margin-top:3px">🆔 MoMo: <b id="showMomo">-</b> | <span id="pack" style="color:gold;font-weight:bold">-</span></div>
+    </div>
+    <button onclick="retirer()" style="background:#00e5ff;padding:8px 15px;border-radius:20px;border:0;font-weight:bold;cursor:pointer">RETIRER</button>
+  </div>
+  <div class="top2">
+    <div class="box"><p>SOLDE ACTUEL</p><h3 id="solde" style="color:#00e676">0F</h3></div>
+    <div class="box" style="border:1px dashed gold"><p>BONUS</p><h3 id="soldeBonus" style="color:gold">0F</h3></div>
+  </div>
 </div>
+
 <h2 id="titre" style="text-align:center;color:gold"></h2>
 <div id="msg"><h3>🔒 Limite atteinte!</h3><p>Tu as fini tes vidéos d'aujourd'hui.<br>Reviens <b>DEMAIN</b> à 00h.</p></div>
 <div class="grid" id="grid"></div>
+
+<div id="popupRetrait">
+  <div class="popupBox">
+    <h3 style="text-align:center;color:gold;margin-top:0">Demande de Retrait</h3>
+    <input id="f_nom" placeholder="Nom complet sur le compte">
+    <input id="f_tel" placeholder="Numéro WhatsApp">
+    <input id="f_momo" placeholder="Numéro MoMo pour recevoir">
+    <select id="f_pays">
+      <option value="">Choisis ton pays</option>
+      <option value="Bénin">Bénin</option>
+      <option value="Togo">Togo</option>
+      <option value="Côte d'Ivoire">Côte d'Ivoire</option>
+      <option value="Sénégal">Sénégal</option>
+      <option value="Cameroun">Cameroun</option>
+      <option value="Autre">Autre</option>
+    </select>
+    <div style="background:#222;padding:10px;border-radius:8px;margin:8px 0">
+      <p style="margin:0;font-size:12px;color:#aaa">Solde: <b id="f_soldeDispo" style="color:#00e676"></b> | Bonus: <b id="f_bonusDispo" style="color:gold"></b></p>
+      <p style="margin:5px 0 0 0;font-size:12px;color:#fff">Total disponible: <b id="f_totalDispo" style="color:#fff"></b></p>
+    </div>
+    <label style="font-size:13px;color:gold">💸 Combien veux-tu retirer?</label>
+    <input id="f_montant" type="number" placeholder="Ex: 5000">
+    <button onclick="envoyerWhatsApp()" style="width:100%;padding:13px;background:#25D366;color:white;border:0;border-radius:10px;font-weight:bold;font-size:16px;margin-top:5px">📲 Envoyer sur WhatsApp</button>
+    <button onclick="document.getElementById('popupRetrait').style.display='none'" style="width:100%;padding:10px;background:#333;color:#fff;border:0;border-radius:10px;margin-top:8px">Annuler</button>
+  </div>
+</div>
+
 <script>
 let solde=parseInt(localStorage.getItem('solde')||0);
+let bonus=parseInt(localStorage.getItem('bonus')||0);
 let pack=localStorage.getItem('pack')||'';
-let nom=localStorage.getItem('nom')||'Client';
+let nom=localStorage.getItem('nom')||'';
 let momo=localStorage.getItem('momo')||'';
 let tel=localStorage.getItem('tel')||'';
 let pays=localStorage.getItem('pays')||'';
@@ -49,16 +96,25 @@ if(!pack){
   alert('⛔ Tu dois payer un PACK avant de voir les vidéos!');
   window.location.href='index.html';
 }
+
 function saveSolde(){
  let users=JSON.parse(localStorage.getItem('vc_users')||'{}');
- if(users[tel]){ users[tel].solde=solde; localStorage.setItem('vc_users', JSON.stringify(users)); }
+ if(users[tel]){ users[tel].solde=solde; users[tel].bonus=bonus; localStorage.setItem('vc_users', JSON.stringify(users)); }
  localStorage.setItem('solde', solde);
+ localStorage.setItem('bonus', bonus);
 }
+
 let limits={starter:15,pro:25,boss:30};
 let max=limits[pack]||0;
-document.getElementById('solde').innerText=solde;
+
+document.getElementById('solde').innerText=solde+'F';
+document.getElementById('soldeBonus').innerText=bonus+'F';
+document.getElementById('showNom').innerText= nom || 'Client';
+document.getElementById('showTel').innerText= tel || '-';
+document.getElementById('showMomo').innerText= momo || tel || '-';
 document.getElementById('pack').innerText=pack.toUpperCase();
-document.getElementById('titre').innerText=max+' VIDÉOS AUJOURD\'HUI = '+(max*1000)+'F';
+document.getElementById('titre').innerText=max+' VIDÉOS = '+(max*1000)+'F / jour';
+
 let today=new Date().toDateString();
 if(localStorage.getItem('lastDay')!=today){localStorage.setItem('lastDay',today)}
 let vuToday=0;for(let i=1;i<=30;i++){if(localStorage.getItem('v'+i+'_'+today)) vuToday++;}
@@ -71,6 +127,7 @@ let cls=vu?'done':blocked?'blocked':'';
 grid.innerHTML+=`<div class="card"><div style="background:#222;height:80px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:30px">🎬</div><p>Vidéo ${i}</p><p style="color:gold">+1000F</p><button id="b${i}" class="${cls}" onclick="voir(${i})" ${blocked?'disabled':''}>${btnText}</button></div>`;
 }
 if(vuToday>=max) document.getElementById('msg').style.display='block';
+
 function voir(n){
 let today=new Date().toDateString();
 let count=0;for(let i=1;i<=30;i++){if(localStorage.getItem('v'+i+'_'+today)) count++;}
@@ -84,20 +141,49 @@ if(c<=0){
 clearInterval(t);
 localStorage.setItem('v'+n+'_'+today,'1');
 solde+=1000; saveSolde();
-document.getElementById('solde').innerText=solde;
+document.getElementById('solde').innerText=solde+'F';
 btn.innerText='✅ VU +1000F';btn.className='done';
-count++;
-if(count>=max){document.getElementById('msg').style.display='block';}
 location.reload();
 }
 },1000);
 }
+
 function retirer(){
-if(solde<5000){alert('Minimum 5000F pour retirer. Tu as '+solde+'F');return}
+let total = solde + bonus;
+if(total < 5000){alert('Minimum 5000F pour retirer. Tu as '+total+'F');return}
+document.getElementById('f_nom').value = nom;
+document.getElementById('f_tel').value = tel;
+document.getElementById('f_momo').value = momo || tel;
+document.getElementById('f_pays').value = pays;
+document.getElementById('f_montant').value = "";
+document.getElementById('f_montant').placeholder = "Max "+total+"F";
+document.getElementById('f_soldeDispo').innerText = solde+'F';
+document.getElementById('f_bonusDispo').innerText = bonus+'F';
+document.getElementById('f_totalDispo').innerText = total+'F';
+document.getElementById('popupRetrait').style.display='flex';
+}
+
+function envoyerWhatsApp(){
+let f_nom = document.getElementById('f_nom').value.trim();
+let f_tel = document.getElementById('f_tel').value.trim();
+let f_momo = document.getElementById('f_momo').value.trim();
+let f_pays = document.getElementById('f_pays').value;
+let f_montant = parseInt(document.getElementById('f_montant').value.trim());
+
+if(!f_nom ||!f_tel ||!f_momo ||!f_pays ||!f_montant){ alert('Remplis tout le formulaire'); return; }
+let total = solde + bonus;
+if(f_montant > total){ alert('Tu ne peux pas retirer plus que '+total+'F'); return; }
+if(f_montant < 5000){ alert('Minimum 5000F'); return; }
+
+localStorage.setItem('nom', f_nom);
+localStorage.setItem('tel', f_tel);
+localStorage.setItem('momo', f_momo);
+localStorage.setItem('pays', f_pays);
+
 let numeroService="22952681981";
-let message=`DEMANDE DE RETRAIT VISION CASHOUT%0A%0A👤 Nom: ${nom}%0A🌍 Pays: ${pays}%0A📱 WhatsApp: ${tel}%0A💳 MoMo retrait: ${momo}%0A📦 Pack: ${pack}%0A💰 Montant: ${solde}F%0A%0ASalut, je demande mon retrait svp.`;
+let message=`DEMANDE DE RETRAIT VISION CASHOUT%0A%0A👤 Nom: ${f_nom}%0A🌍 Pays: ${f_pays}%0A📱 WhatsApp: ${f_tel}%0A💳 MoMo retrait: ${f_momo}%0A📦 Pack: ${pack.toUpperCase()}%0A💰 Solde actuel: ${solde}F%0A🎁 Bonus: ${bonus}F%0A💵 TOTAL: ${total}F%0A💸 IL VEUT RETIRER: ${f_montant}F%0A%0ASalut, je demande mon retrait.`;
 window.location.href=`https://wa.me/${numeroService}?text=${message}`;
 }
 </script>
 </body>
-</html>
+  </html>
