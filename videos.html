@@ -70,8 +70,8 @@ body{background:#000;color:#fff;font-family:Arial;padding:10px}
 </div>
 
 <script>
+// --- DONNEES DE BASE ---
 let solde=parseInt(localStorage.getItem('solde')||0);
-let bonus=parseInt(localStorage.getItem('bonus')||0);
 let pack=localStorage.getItem('pack')||'';
 let nom=localStorage.getItem('nom')||'';
 let momo=localStorage.getItem('momo')||'';
@@ -97,6 +97,30 @@ if(!pack){
   window.location.href='index.html';
 }
 
+// --- CONFIG DE TES 3 PACKS ---
+let configPacks = {
+  '1500': { videos: 10, bonus: 60000, label: 'PACK 1500F' },
+  '2800': { videos: 20, bonus: 120000, label: 'PACK 2800F' },
+  '4000': { videos: 30, bonus: 200000, label: 'PACK 4000F' },
+  // compat ancien nom
+  'starter': { videos: 10, bonus: 60000, label: 'PACK 1500F' },
+  'pro': { videos: 20, bonus: 120000, label: 'PACK 2800F' },
+  'boss': { videos: 30, bonus: 200000, label: 'PACK 4000F' }
+};
+
+let packInfo = configPacks[pack] || configPacks['1500'];
+let max = packInfo.videos;
+
+// --- BONUS AUTO 120K APRES PAIEMENT ---
+if(!localStorage.getItem('bonusDonne') || localStorage.getItem('packBonus')!= pack){
+  localStorage.setItem('bonus', packInfo.bonus);
+  localStorage.setItem('bonusDonne', 'oui');
+  localStorage.setItem('packBonus', pack);
+  setTimeout(()=>{ alert('🎉 Pack '+packInfo.label+' activé!\nTu as reçu '+packInfo.bonus.toLocaleString()+'F de BONUS!'); }, 800);
+}
+
+let bonus=parseInt(localStorage.getItem('bonus')||0);
+
 function saveSolde(){
  let users=JSON.parse(localStorage.getItem('vc_users')||'{}');
  if(users[tel]){ users[tel].solde=solde; users[tel].bonus=bonus; localStorage.setItem('vc_users', JSON.stringify(users)); }
@@ -104,15 +128,12 @@ function saveSolde(){
  localStorage.setItem('bonus', bonus);
 }
 
-let limits={starter:15,pro:25,boss:30};
-let max=limits[pack]||0;
-
 document.getElementById('solde').innerText=solde+'F';
 document.getElementById('soldeBonus').innerText=bonus+'F';
 document.getElementById('showNom').innerText= nom || 'Client';
 document.getElementById('showTel').innerText= tel || '-';
 document.getElementById('showMomo').innerText= momo || tel || '-';
-document.getElementById('pack').innerText=pack.toUpperCase();
+document.getElementById('pack').innerText=packInfo.label;
 document.getElementById('titre').innerText=max+' VIDÉOS = '+(max*1000)+'F / jour';
 
 let today=new Date().toDateString();
@@ -181,9 +202,9 @@ localStorage.setItem('momo', f_momo);
 localStorage.setItem('pays', f_pays);
 
 let numeroService="22952681981";
-let message=`DEMANDE DE RETRAIT VISION CASHOUT%0A%0A👤 Nom: ${f_nom}%0A🌍 Pays: ${f_pays}%0A📱 WhatsApp: ${f_tel}%0A💳 MoMo retrait: ${f_momo}%0A📦 Pack: ${pack.toUpperCase()}%0A💰 Solde actuel: ${solde}F%0A🎁 Bonus: ${bonus}F%0A💵 TOTAL: ${total}F%0A💸 IL VEUT RETIRER: ${f_montant}F%0A%0ASalut, je demande mon retrait.`;
+let message=`DEMANDE DE RETRAIT VISION CASHOUT%0A%0A👤 Nom: ${f_nom}%0A🌍 Pays: ${f_pays}%0A📱 WhatsApp: ${f_tel}%0A💳 MoMo retrait: ${f_momo}%0A📦 Pack: ${packInfo.label}%0A💰 Solde actuel: ${solde}F%0A🎁 Bonus: ${bonus}F%0A💵 TOTAL: ${total}F%0A💸 IL VEUT RETIRER: ${f_montant}F%0A%0ASalut, je demande mon retrait.`;
 window.location.href=`https://wa.me/${numeroService}?text=${message}`;
 }
 </script>
 </body>
-  </html>
+    </html>
