@@ -17,21 +17,41 @@ body{background:#000;color:#fff;font-family:Arial;padding:10px}
 </head>
 <body>
 <div class="top">
-<div>💰 <b id="solde">0</b>F | <span id="pack">STARTER</span></div>
+<div>💰 <b id="solde">0</b>F | <span id="pack">-</span></div>
 <button onclick="retirer()" style="background:#00e5ff;padding:8px 15px;border-radius:20px;border:0;font-weight:bold;cursor:pointer">RETIRER</button>
 </div>
 <h2 id="titre" style="text-align:center;color:gold"></h2>
 <div id="msg"><h3>🔒 Limite atteinte!</h3><p>Tu as fini tes vidéos d'aujourd'hui.<br>Reviens <b>DEMAIN</b> à 00h.</p></div>
 <div class="grid" id="grid"></div>
 <script>
+// --- DONNEES ---
 let solde=parseInt(localStorage.getItem('solde')||0);
-let pack=localStorage.getItem('pack')||'starter';
+let pack=localStorage.getItem('pack')||'';
 let nom=localStorage.getItem('nom')||'Client';
 let momo=localStorage.getItem('momo')||'';
 let tel=localStorage.getItem('tel')||'';
 let pays=localStorage.getItem('pays')||'';
 
-// FIX: sauvegarde auto par compte
+// --- VERIF PAIEMENT OBLIGATOIRE ---
+let paramsUrl = new URLSearchParams(window.location.search);
+let paidParam = paramsUrl.get('paid');
+
+if(paidParam){
+  pack = paidParam;
+  localStorage.setItem('pack', pack);
+  localStorage.removeItem('pack_en_attente');
+  let users=JSON.parse(localStorage.getItem('vc_users')||'{}');
+  if(users[tel]){ users[tel].pack=pack; localStorage.setItem('vc_users', JSON.stringify(users));}
+  window.history.replaceState({}, document.title, "videos.html");
+}
+
+// BLOCAGE SI PAS PAYÉ
+if(!pack){
+  alert('⛔ Tu dois payer un PACK avant de voir les vidéos!');
+  window.location.href='index.html';
+  throw new Error('bloqué');
+}
+
 function saveSolde(){
  let users=JSON.parse(localStorage.getItem('vc_users')||'{}');
  if(users[tel]){ users[tel].solde=solde; localStorage.setItem('vc_users', JSON.stringify(users)); }
@@ -39,10 +59,11 @@ function saveSolde(){
 }
 
 let limits={starter:15,pro:25,boss:30};
-let max=limits[pack]||15;
+let max=limits[pack]||0;
 document.getElementById('solde').innerText=solde;
 document.getElementById('pack').innerText=pack.toUpperCase();
 document.getElementById('titre').innerText=max+' VIDÉOS AUJOURD\'HUI = '+(max*1000)+'F';
+
 let today=new Date().toDateString();
 if(localStorage.getItem('lastDay')!=today){localStorage.setItem('lastDay',today)}
 let vuToday=0;for(let i=1;i<=30;i++){if(localStorage.getItem('v'+i+'_'+today)) vuToday++;}
