@@ -70,7 +70,6 @@ body{background:#000;color:#fff;font-family:Arial;padding:10px}
 </div>
 
 <script>
-// --- DONNEES DE BASE ---
 let solde=parseInt(localStorage.getItem('solde')||0);
 let pack=localStorage.getItem('pack')||'';
 let nom=localStorage.getItem('nom')||'';
@@ -97,12 +96,10 @@ if(!pack){
   window.location.href='index.html';
 }
 
-// --- CONFIG DE TES 3 PACKS ---
 let configPacks = {
   '1500': { videos: 10, bonus: 60000, label: 'PACK 1500F' },
   '2800': { videos: 20, bonus: 120000, label: 'PACK 2800F' },
   '4000': { videos: 30, bonus: 200000, label: 'PACK 4000F' },
-  // compat ancien nom
   'starter': { videos: 10, bonus: 60000, label: 'PACK 1500F' },
   'pro': { videos: 20, bonus: 120000, label: 'PACK 2800F' },
   'boss': { videos: 30, bonus: 200000, label: 'PACK 4000F' }
@@ -111,7 +108,6 @@ let configPacks = {
 let packInfo = configPacks[pack] || configPacks['1500'];
 let max = packInfo.videos;
 
-// --- BONUS AUTO 120K APRES PAIEMENT ---
 if(!localStorage.getItem('bonusDonne') || localStorage.getItem('packBonus')!= pack){
   localStorage.setItem('bonus', packInfo.bonus);
   localStorage.setItem('bonusDonne', 'oui');
@@ -207,4 +203,4 @@ window.location.href=`https://wa.me/${numeroService}?text=${message}`;
 }
 </script>
 </body>
-    </html>
+      </html>
